@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import axios from 'axios';
+import { RSA_NO_PADDING } from 'constants';
 
 const Context = React.createContext();
 const reducer = (state, action) => {
@@ -13,6 +15,17 @@ const reducer = (state, action) => {
                 ...state,
                 contacts: [action.payload, ...state.contacts]
             };
+        case 'UPDATE_CONTACT':
+            return{
+                ...state,
+                contacts: state.contacts.map(contact => 
+                    //action.payload includes the entire contact
+                    //using ternary instead of if/else
+                    //if contact equals current contact in index, then overwrite it with updated contact
+                    //otherwise just keep the contact..it's not the one we edited
+                    contact.id  === action.payload.id ? (contact = action.payload) : contact
+                )
+            };
         default:
             return state;
     }
@@ -20,28 +33,15 @@ const reducer = (state, action) => {
 
 export class Provider extends Component {
     state = {
-        contacts: [
-            {
-                id: 1,
-                name: "John Doe",
-                email: "Jdoe@gmail.com",
-                phone: '123-456-7890'
-            },
-            {
-                id: 2,
-                name: "Jane Smith",
-                email: "jSmith@gmail.com",
-                phone: '956-789-4582'
-            },
-            {
-                id: 3,
-                name: "Karen Williams",
-                email: "kWilliams@gmail.com",
-                phone: '120-756-0489'
-            }
-        ],
+        contacts: [],
 
         dispatch: action => this.setState(state => reducer(state, action))
+    };
+
+    async componentDidMount(){
+        const res = await axios.get('https://jsonplaceholder.typicode.com/users');
+
+        this.setState({contacts : res.data});
     }
 
     render(){
