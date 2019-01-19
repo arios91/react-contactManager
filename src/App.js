@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 import AddContact from './components/contacts/AddContact';
 import EditContact from './components/contacts/EditContact';
 import Contacts from './components/contacts/Contacts';
